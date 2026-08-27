@@ -2,16 +2,26 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const contactSchema = z.object({
-  name: z.string().trim().min(1, "Ange ditt namn").max(100),
+  regnr: z.string().trim().max(15).optional().or(z.literal("")),
+  vehicleType: z.enum(["husbil", "husvagn"]),
+  condition: z
+    .string()
+    .trim()
+    .min(1, "Beskriv fordonets skick")
+    .max(2000),
   phone: z
     .string()
     .trim()
     .min(5, "Ange ett giltigt telefonnummer")
     .max(25)
     .regex(/^[0-9+\-()\s]+$/, "Ange ett giltigt telefonnummer"),
-  email: z.string().trim().email("Ange en giltig e-postadress").max(255),
-  interest: z.enum(["salja", "kopa", "byta", "husbil", "ovrigt"]),
-  message: z.string().trim().min(1, "Skriv ett meddelande").max(2000),
+  email: z
+    .string()
+    .trim()
+    .max(255)
+    .email("Ange en giltig e-postadress")
+    .optional()
+    .or(z.literal("")),
 });
 
 export const submitContactForm = createServerFn({ method: "POST" })
@@ -46,12 +56,12 @@ export const sendTestMessage = createServerFn({ method: "POST" }).handler(
         "@/lib/email-templates/send-email"
       );
       await sendContactMessage({
-        name: "Test (hemsidan)",
+        regnr: "TEST123",
+        vehicleType: "husbil",
         phone: "000-000 00 00",
         email: "test@example.com",
-        interest: "ovrigt",
-        message:
-          "Detta är ett automatiskt testmeddelande från kontaktformuläret. Om du läser detta fungerar e-postutskicket.",
+        condition:
+          "Detta är ett automatiskt testmeddelande från värderingsformuläret. Om du läser detta fungerar e-postutskicket.",
       });
       lastTestSentAt = now;
       return { ok: true as const };

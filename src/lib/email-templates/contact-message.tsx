@@ -11,58 +11,56 @@ import {
   Text,
 } from "@react-email/components";
 
-export const INTEREST_LABELS: Record<string, string> = {
-  salja: "Vill sälja husbil/husvagn",
-  kopa: "Vill köpa",
-  byta: "Vill byta",
-  husbil: "Fråga om husbil",
-  ovrigt: "Övrig fråga",
+export const VEHICLE_LABELS: Record<string, string> = {
+  husbil: "Husbil",
+  husvagn: "Husvagn",
 };
 
 export interface ContactMessageProps {
-  name: string;
+  regnr?: string | undefined;
+  vehicleType: string;
+  condition: string;
   phone: string;
-  email: string;
-  interest: string;
-  message: string;
+  email?: string | undefined;
 }
 
 export function ContactMessageEmail({
-  name,
+  regnr,
+  vehicleType,
+  condition,
   phone,
   email,
-  interest,
-  message,
 }: ContactMessageProps) {
-  const interestLabel = INTEREST_LABELS[interest] ?? interest;
+  const vehicleLabel = VEHICLE_LABELS[vehicleType] ?? vehicleType;
   return (
     <Html lang="sv" dir="ltr">
       <Head />
-      <Preview>Nytt meddelande från {name} – {interestLabel}</Preview>
+      <Preview>
+        Ny värderingsförfrågan – {vehicleLabel} {regnr ? `(${regnr})` : ""}
+      </Preview>
       <Body style={main}>
         <Container style={container}>
-          <Heading style={heading}>Nytt meddelande via hemsidan</Heading>
+          <Heading style={heading}>Ny värderingsförfrågan</Heading>
           <Section style={box}>
             <Text style={row}>
-              <strong>Namn:</strong> {name}
+              <strong>Fordonstyp:</strong> {vehicleLabel}
+            </Text>
+            <Text style={row}>
+              <strong>Registreringsnummer:</strong> {regnr || "–"}
             </Text>
             <Text style={row}>
               <strong>Telefon:</strong> {phone}
             </Text>
             <Text style={row}>
-              <strong>E-post:</strong> {email}
-            </Text>
-            <Text style={row}>
-              <strong>Ämne:</strong> {interestLabel}
+              <strong>E-post:</strong> {email || "–"}
             </Text>
           </Section>
           <Hr style={hr} />
-          <Text style={label}>Meddelande:</Text>
-          <Text style={messageText}>{message}</Text>
+          <Text style={label}>Skick / beskrivning:</Text>
+          <Text style={messageText}>{condition}</Text>
           <Hr style={hr} />
           <Text style={footer}>
-            Skickat via kontaktformuläret på Ljunggrens Husbilars hemsida. Svara
-            direkt till kundens e-postadress ovan.
+            Skickat via värderingsformuläret på Ljunggrens Husbilars hemsida.
           </Text>
         </Container>
       </Body>
@@ -72,14 +70,14 @@ export function ContactMessageEmail({
 
 const main = { backgroundColor: "#ffffff", fontFamily: "Arial, sans-serif" };
 const container = { padding: "24px", maxWidth: "560px" };
-const heading = { color: "#1f3d2b", fontSize: "22px" };
+const heading = { color: "#101c3d", fontSize: "22px" };
 const box = {
-  backgroundColor: "#f6f4ef",
+  backgroundColor: "#f4f5f7",
   borderRadius: "8px",
   padding: "12px 16px",
 };
 const row = { margin: "6px 0", fontSize: "14px", color: "#333333" };
-const hr = { borderColor: "#e5e2da", margin: "16px 0" };
+const hr = { borderColor: "#e3e5ea", margin: "16px 0" };
 const label = { fontSize: "14px", color: "#666666", marginBottom: "4px" };
 const messageText = {
   fontSize: "15px",

@@ -7,7 +7,7 @@ import { sendLovableEmail } from "@lovable.dev/email-js";
 import { createElement } from "react";
 import {
   ContactMessageEmail,
-  INTEREST_LABELS,
+  VEHICLE_LABELS,
   type ContactMessageProps,
 } from "./contact-message";
 
@@ -21,18 +21,18 @@ export async function sendContactMessage(data: ContactMessageProps) {
   const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new Error("E-posttjänsten är inte konfigurerad");
 
-  const interestLabel = INTEREST_LABELS[data.interest] ?? data.interest;
+  const vehicleLabel = VEHICLE_LABELS[data.vehicleType] ?? data.vehicleType;
   const html = await render(createElement(ContactMessageEmail, data));
   const text = [
-    "Nytt meddelande via hemsidan",
+    "Ny värderingsförfrågan",
     "",
-    `Namn: ${data.name}`,
+    `Fordonstyp: ${vehicleLabel}`,
+    `Registreringsnummer: ${data.regnr || "–"}`,
     `Telefon: ${data.phone}`,
-    `E-post: ${data.email}`,
-    `Ämne: ${interestLabel}`,
+    `E-post: ${data.email || "–"}`,
     "",
-    "Meddelande:",
-    data.message,
+    "Skick / beskrivning:",
+    data.condition,
   ].join("\n");
 
   return sendLovableEmail(
@@ -42,11 +42,11 @@ export async function sendContactMessage(data: ContactMessageProps) {
       sender_domain: SENDER_DOMAIN,
       purpose: "transactional",
       label: "contact-form",
-      reply_to: data.email,
-      subject: `Nytt meddelande från ${data.name} – ${interestLabel}`,
+      ...(data.email ? { reply_to: data.email } : {}),
+      subject: `Värdering: ${vehicleLabel}${data.regnr ? ` ${data.regnr}` : ""} – ${data.phone}`,
       html,
       text,
-      idempotency_key: `contact-${Date.now()}-${data.email}`,
+      idempotency_key: `contact-${Date.now()}-${data.phone}`,
     },
     { apiKey },
   );

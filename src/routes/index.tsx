@@ -13,9 +13,17 @@ import {
   MailCheck,
   ArrowRight,
   Banknote,
-  Star,
+  Wrench,
+  Menu,
+  X,
 } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import {
   submitContactForm,
   sendTestMessage,
@@ -34,13 +42,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Ljunggrens Husbilar köper husbilar och husvagnar över hela Sverige. Kostnadsfri värdering via telefon. Vi köper alla märken, modeller och skick – även skadade och obesiktigade fordon. Ring 076-237 90 95.",
+          "Vi köper din husbil eller husvagn – tryggt, enkelt och i hela Sverige. Alla märken, modeller och skick. Kostnadsfri värdering och betalning på plats. Ring 076-237 90 95.",
       },
       { property: "og:title", content: "Ljunggrens Husbilar | Vi köper husbilar & husvagnar" },
       {
         property: "og:description",
         content:
-          "Kostnadsfri värdering via telefon. Vi köper husbilar och husvagnar i hela Sverige – oavsett märke, modell eller skick.",
+          "Kostnadsfri värdering, hämtning i hela Sverige och betalning på plats. Vi köper alla märken, modeller och skick.",
       },
       { property: "og:type", content: "website" },
       { property: "og:image", content: heroImage },
@@ -49,7 +57,7 @@ export const Route = createFileRoute("/")({
       {
         name: "twitter:description",
         content:
-          "Kostnadsfri värdering via telefon. Vi köper husbilar och husvagnar i hela Sverige – oavsett märke, modell eller skick.",
+          "Kostnadsfri värdering, hämtning i hela Sverige och betalning på plats.",
       },
       { name: "twitter:image", content: heroImage },
     ],
@@ -59,6 +67,62 @@ export const Route = createFileRoute("/")({
 
 const PHONE_NUMBER = "076-237 90 95";
 const PHONE_HREF = "tel:+46762379095";
+
+const navLinks = [
+  { href: "#vikoper", label: "Vi köper" },
+  { href: "#sagar", label: "Så går det till" },
+  { href: "#galleri", label: "Fordon" },
+  { href: "#kontakt", label: "Kontakt" },
+];
+
+const trustBadges = [
+  "Betalning på plats",
+  "Hämtning i hela Sverige",
+  "Även defekta/obesiktade fordon",
+];
+
+const stats = [
+  { value: "1990–2026", label: "Årsmodeller" },
+  { value: "4–12 m", label: "Alla fordonsstorlekar" },
+  { value: "Hela Sverige", label: "Vi hämtar hos dig" },
+  { value: "0 kr", label: "Kostnadsfri värdering" },
+];
+
+const valueProps = [
+  {
+    icon: Wrench,
+    title: "Alla skick av intresse",
+    text: "Vi köper även fordon med fukt-, motor- eller krockskador – och obesiktigade objekt.",
+  },
+  {
+    icon: Clock,
+    title: "Snabb affär & direkt bud",
+    text: "Få en värdering över telefon utan krångel. Oftast lämnar vi bud direkt.",
+  },
+  {
+    icon: Banknote,
+    title: "Lösning av restskuld",
+    text: "Vi hjälper dig med finansiering som står kvar och sköter pappersarbetet.",
+  },
+];
+
+const steps = [
+  {
+    step: "01",
+    title: "Kontakta oss",
+    text: "Ring eller fyll i formuläret. Berätta kort om fordonet – typ, årsmodell, mil och skick.",
+  },
+  {
+    step: "02",
+    title: "Få ett bud",
+    text: "Vi gör en kostnadsfri värdering och lämnar ett tydligt, konkurrenskraftigt bud.",
+  },
+  {
+    step: "03",
+    title: "Hämtning & betalning",
+    text: "Vi hämtar fordonet var du än är i Sverige och betalar enligt överenskommelse.",
+  },
+];
 
 const boughtItems = [
   {
@@ -121,39 +185,83 @@ const gallery = [
   { src: rv5.url, alt: "Vit husvagn med röd dekor" },
 ];
 
-const benefits = [
-  { icon: Banknote, text: "Inlösen av kvarvarande/restskuld" },
+const services = [
+  { icon: Banknote, text: "Inlösen av kvarvarande restskuld" },
   { icon: Truck, text: "Hämtning av din husbil eller husvagn" },
   { icon: MapPin, text: "Hämtning över hela Sverige" },
   { icon: Clock, text: "Snabb och smidig affär" },
-  { icon: ShieldCheck, text: "Kontant betalning på plats enligt överenskommelse" },
+  { icon: ShieldCheck, text: "Betalning på plats enligt överenskommelse" },
   { icon: Phone, text: "Seriös värdering och enkel försäljning" },
 ];
 
-const stats = [
-  { value: "1990–2026", label: "Årsmodeller vi köper" },
-  { value: "4–12 m", label: "Alla fordonsstorlekar" },
-  { value: "Hela", label: "Sverige – vi hämtar" },
-  { value: "0 kr", label: "Kostnadsfri värdering" },
-];
+/* ---------- Scroll reveal ---------- */
 
-const steps = [
-  {
-    step: "01",
-    title: "Ring eller skicka formuläret",
-    text: "Berätta kort om fordonet – märke, årsmodell, mil och skick. Bilder är ett plus men inget krav.",
-  },
-  {
-    step: "02",
-    title: "Du får ett bud",
-    text: "Vi gör en kostnadsfri värdering via telefon och lämnar ett tydligt och konkurrenskraftigt bud.",
-  },
-  {
-    step: "03",
-    title: "Vi hämtar och betalar",
-    text: "Vi hämtar fordonet var du än är i Sverige, löser eventuell restskuld och betalar enligt överenskommelse.",
-  },
-];
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            io.disconnect();
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      data-visible={visible}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`reveal ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ---------- Shared UI ---------- */
+
+function PhoneButton({
+  large,
+  className = "",
+}: {
+  large?: boolean;
+  className?: string;
+}) {
+  return (
+    <a
+      href={PHONE_HREF}
+      className={[
+        "group inline-flex items-center justify-center gap-2.5 rounded-full font-semibold tracking-tight transition-all duration-200",
+        "bg-brand text-brand-foreground shadow-[0_10px_28px_-12px_var(--brand)] hover:-translate-y-0.5 hover:bg-brand/92 hover:shadow-[0_18px_38px_-14px_var(--brand)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        large ? "px-7 py-4 text-base sm:text-lg" : "px-5 py-2.5 text-sm",
+        className,
+      ].join(" ")}
+    >
+      <Phone className={large ? "h-5 w-5" : "h-4 w-4"} aria-hidden="true" />
+      {PHONE_NUMBER}
+    </a>
+  );
+}
 
 function SectionHeading({
   eyebrow,
@@ -200,55 +308,88 @@ function SectionHeading({
   );
 }
 
-function SiteHeader() {
+function BrandMark({ light }: { light?: boolean }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3.5 sm:px-6">
-        <a href="#top" className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-forest">
-            <Truck className="h-5 w-5 text-accent" aria-hidden="true" />
-          </span>
-          <span className="leading-tight">
-            <span className="block font-display text-sm font-bold uppercase tracking-[0.14em] text-foreground">
-              Ljunggrens
-            </span>
-            <span className="block text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              Husbilar
-            </span>
-          </span>
-        </a>
-        <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
-          <a href="#vikoper" className="transition-colors hover:text-foreground">Vi köper</a>
-          <a href="#sagar" className="transition-colors hover:text-foreground">Så går det till</a>
-          <a href="#galleri" className="transition-colors hover:text-foreground">Fordon</a>
-          <a href="#kontakt" className="transition-colors hover:text-foreground">Kontakt</a>
-        </nav>
-        <PhoneButton className="shrink-0" />
-      </div>
-    </header>
+    <a href="#top" className="flex items-center gap-3">
+      <span
+        className={[
+          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+          light ? "bg-forest-foreground/10" : "bg-forest",
+        ].join(" ")}
+      >
+        <Truck className="h-5 w-5 text-accent" aria-hidden="true" />
+      </span>
+      <span className="leading-tight">
+        <span
+          className={[
+            "block font-display text-sm font-bold uppercase tracking-[0.14em]",
+            light ? "text-forest-foreground" : "text-foreground",
+          ].join(" ")}
+        >
+          Ljunggrens
+        </span>
+        <span
+          className={[
+            "block text-[11px] font-medium uppercase tracking-[0.2em]",
+            light ? "text-forest-foreground/70" : "text-muted-foreground",
+          ].join(" ")}
+        >
+          Husbilar
+        </span>
+      </span>
+    </a>
   );
 }
 
-function PhoneButton({
-  large,
-  className = "",
-}: {
-  large?: boolean;
-  className?: string;
-}) {
+function SiteHeader() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <a
-      href={PHONE_HREF}
-      className={[
-        "group inline-flex items-center justify-center gap-2.5 rounded-full font-semibold tracking-tight transition-all duration-200",
-        "bg-brand text-brand-foreground shadow-[0_10px_30px_-12px_var(--brand)] hover:-translate-y-0.5 hover:bg-brand/92 hover:shadow-[0_18px_38px_-14px_var(--brand)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-        large ? "px-8 py-4 text-lg" : "px-5 py-2.5 text-sm sm:text-base",
-        className,
-      ].join(" ")}
-    >
-      <Phone className={large ? "h-5 w-5" : "h-4 w-4"} aria-hidden="true" />
-      {PHONE_NUMBER}
-    </a>
+    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-md">
+      <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5 py-3 sm:px-6 md:flex md:justify-between">
+        <BrandMark />
+        <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
+          {navLinks.map((l) => (
+            <a key={l.href} href={l.href} className="transition-colors hover:text-foreground">
+              {l.label}
+            </a>
+          ))}
+        </nav>
+        <div className="flex shrink-0 items-center gap-2">
+          <PhoneButton className="hidden sm:inline-flex" />
+          <a
+            href={PHONE_HREF}
+            aria-label={`Ring ${PHONE_NUMBER}`}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand text-brand-foreground sm:hidden"
+          >
+            <Phone className="h-4 w-4" aria-hidden="true" />
+          </a>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Meny"
+            aria-expanded={open}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground md:hidden"
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+      </div>
+      {open && (
+        <nav className="border-t border-border bg-background px-5 py-3 md:hidden">
+          {navLinks.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className="block rounded-lg px-2 py-3 text-base font-medium text-foreground transition-colors hover:bg-secondary"
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
+      )}
+    </header>
   );
 }
 
@@ -270,7 +411,7 @@ function BoughtItemCard({
         <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand/10">
           <CheckCircle2 className="h-4 w-4 text-brand" aria-hidden="true" />
         </span>
-        <span className="flex-1 font-semibold leading-snug text-foreground">
+        <span className="min-w-0 flex-1 font-semibold leading-snug text-foreground">
           {item.title}
         </span>
         <ChevronDown
@@ -297,19 +438,14 @@ function BoughtItemCard({
   );
 }
 
-const interestOptions = [
-  { value: "salja", label: "Jag vill sälja husbil/husvagn" },
-  { value: "kopa", label: "Jag vill köpa" },
-  { value: "byta", label: "Jag vill byta" },
-  { value: "husbil", label: "Fråga om husbil" },
-  { value: "ovrigt", label: "Övrig fråga" },
-] as const;
+/* ---------- Lead form ---------- */
 
 const inputClass =
-  "w-full rounded-xl border border-border bg-secondary/40 px-4 py-3 text-foreground transition-colors placeholder:text-muted-foreground/60 hover:bg-secondary/60 focus:border-brand focus:bg-card focus:outline-none focus:ring-4 focus:ring-brand/15";
+  "w-full rounded-xl border border-border bg-secondary/50 px-4 py-3 text-foreground transition-colors placeholder:text-muted-foreground/60 hover:bg-secondary focus:border-brand focus:bg-card focus:outline-none focus:ring-4 focus:ring-brand/15";
 
-function ContactForm() {
+function ValuationForm() {
   const submit = useServerFn(submitContactForm);
+  const [vehicleType, setVehicleType] = useState<"husbil" | "husvagn">("husbil");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle",
   );
@@ -324,11 +460,11 @@ function ContactForm() {
     try {
       await submit({
         data: {
-          name: String(fd.get("name") ?? ""),
+          regnr: String(fd.get("regnr") ?? "").toUpperCase(),
+          vehicleType,
+          condition: String(fd.get("condition") ?? ""),
           phone: String(fd.get("phone") ?? ""),
           email: String(fd.get("email") ?? ""),
-          interest: String(fd.get("interest") ?? "salja"),
-          message: String(fd.get("message") ?? ""),
         },
       });
       form.reset();
@@ -348,44 +484,61 @@ function ContactForm() {
       <div className="surface-card rounded-3xl p-10 text-center">
         <CheckCircle2 className="mx-auto h-12 w-12 text-brand" aria-hidden="true" />
         <h3 className="mt-4 text-xl font-semibold text-foreground">
-          Tack för ditt meddelande!
+          Tack för din förfrågan!
         </h3>
         <p className="mt-2 text-muted-foreground">
-          Vi har tagit emot din förfrågan och återkommer till dig så snart som
-          möjligt.
+          Vi har tagit emot uppgifterna och hör av oss med en värdering så snart
+          som möjligt.
         </p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
           className="mt-6 text-sm font-medium text-brand hover:underline"
         >
-          Skicka ett till meddelande
+          Skicka en till förfrågan
         </button>
       </div>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="surface-card rounded-3xl p-6 sm:p-8"
-      noValidate={false}
-    >
+    <form onSubmit={handleSubmit} className="surface-card rounded-3xl p-6 sm:p-8">
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-foreground">
-            Namn *
+          <label htmlFor="regnr" className="mb-1.5 block text-sm font-medium text-foreground">
+            Registreringsnummer
           </label>
           <input
-            id="name"
-            name="name"
+            id="regnr"
+            name="regnr"
             type="text"
-            required
-            maxLength={100}
-            autoComplete="name"
-            placeholder="Ditt namn"
-            className={inputClass}
+            maxLength={15}
+            placeholder="ABC 123"
+            className={`${inputClass} uppercase`}
           />
+        </div>
+        <div>
+          <span className="mb-1.5 block text-sm font-medium text-foreground">
+            Fordonstyp *
+          </span>
+          <div className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-secondary/50 p-1">
+            {(["husbil", "husvagn"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setVehicleType(t)}
+                aria-pressed={vehicleType === t}
+                className={[
+                  "rounded-lg px-3 py-2.5 text-sm font-semibold capitalize transition-all",
+                  vehicleType === t
+                    ? "bg-brand text-brand-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                ].join(" ")}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
         </div>
         <div>
           <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-foreground">
@@ -404,43 +557,30 @@ function ContactForm() {
         </div>
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">
-            E-postadress *
+            E-post
           </label>
           <input
             id="email"
             name="email"
             type="email"
-            required
             maxLength={255}
             autoComplete="email"
             placeholder="din@epost.se"
             className={inputClass}
           />
         </div>
-        <div>
-          <label htmlFor="interest" className="mb-1.5 block text-sm font-medium text-foreground">
-            Vad gäller det? *
-          </label>
-          <select id="interest" name="interest" required className={inputClass} defaultValue="salja">
-            {interestOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
       </div>
       <div className="mt-5">
-        <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-foreground">
-          Meddelande *
+        <label htmlFor="condition" className="mb-1.5 block text-sm font-medium text-foreground">
+          Skick / beskrivning *
         </label>
         <textarea
-          id="message"
-          name="message"
+          id="condition"
+          name="condition"
           required
           maxLength={2000}
           rows={5}
-          placeholder="Berätta gärna om fordonet – märke, årsmodell, skick och mileage."
+          placeholder="Märke, årsmodell, mil och eventuella skador eller fel."
           className={inputClass}
         />
       </div>
@@ -452,15 +592,18 @@ function ContactForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-8 py-4 text-lg font-semibold text-brand-foreground shadow-sm transition-all hover:bg-brand/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60 sm:w-auto"
+        className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-8 py-4 text-base font-semibold text-brand-foreground shadow-[0_12px_30px_-14px_var(--brand)] transition-all hover:-translate-y-0.5 hover:bg-brand/92 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60 sm:text-lg"
       >
         {status === "sending" ? (
           <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
         ) : (
           <Send className="h-5 w-5" aria-hidden="true" />
         )}
-        {status === "sending" ? "Skickar…" : "Skicka meddelande"}
+        {status === "sending" ? "Skickar…" : "Skicka för gratis värdering"}
       </button>
+      <p className="mt-3 text-center text-xs text-muted-foreground">
+        Kostnadsfritt och utan förpliktelser. Vi hör av oss så snart vi kan.
+      </p>
     </form>
   );
 }
@@ -523,6 +666,8 @@ function TestEmailButton() {
   );
 }
 
+/* ---------- Page ---------- */
+
 function Index() {
   return (
     <div id="top" className="min-h-screen bg-background">
@@ -533,7 +678,7 @@ function Index() {
           <div className="absolute inset-0">
             <img
               src={heroImage}
-              alt="Modern husbil i svensk landsbygd"
+              alt="Modern husbil i svensk natur"
               className="h-full w-full object-cover"
               loading="eager"
             />
@@ -543,94 +688,88 @@ function Index() {
           <div className="relative mx-auto max-w-6xl px-5 py-20 sm:px-6 sm:py-28 lg:py-32">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-2 rounded-full border border-forest-foreground/20 bg-forest-foreground/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-accent backdrop-blur-sm">
-                <Star className="h-3.5 w-3.5 fill-accent text-accent" aria-hidden="true" />
-                Seriösa köpare sedan många år
+                <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                Seriösa köpare i hela Sverige
               </span>
               <h1 className="mt-6 text-balance text-4xl font-extrabold leading-[1.05] text-forest-foreground sm:text-5xl lg:text-6xl">
-                Vi köper husbilar &amp; husvagnar –{" "}
-                <span className="text-accent">alla märken och modeller</span>
+                Vi köper din husbil &amp; husvagn –{" "}
+                <span className="text-accent">tryggt, enkelt och i hela Sverige</span>
               </h1>
               <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-forest-foreground/85">
-                Har du en husbil eller husvagn du vill sälja? Vi köper fordon över
-                hela Sverige – oavsett märke, modell eller skick. Kostnadsfri
-                värdering via telefon.
+                Alla märken, modeller och skick. Kostnadsfri värdering och
+                betalning på plats.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <PhoneButton large />
                 <a
                   href="#kontakt"
-                  className="group inline-flex items-center justify-center gap-2 rounded-full border border-forest-foreground/30 px-7 py-4 text-base font-semibold text-forest-foreground backdrop-blur-sm transition-colors hover:bg-forest-foreground/10"
+                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-4 text-base font-semibold text-brand-foreground shadow-[0_14px_34px_-14px_var(--brand)] transition-all hover:-translate-y-0.5 hover:bg-brand/92 sm:text-lg"
                 >
-                  Få värdering via formulär
+                  Få kostnadsfri värdering
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                 </a>
+                <a
+                  href={PHONE_HREF}
+                  className="inline-flex items-center justify-center gap-2.5 rounded-full border border-forest-foreground/30 px-7 py-4 text-base font-semibold text-forest-foreground backdrop-blur-sm transition-colors hover:bg-forest-foreground/10 sm:text-lg"
+                >
+                  <Phone className="h-5 w-5 text-accent" aria-hidden="true" />
+                  Ring oss: {PHONE_NUMBER}
+                </a>
               </div>
-
-              <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2.5 text-sm font-medium text-forest-foreground/80">
-                {[
-                  "Kostnadsfri värdering",
-                  "Hämtning i hela Sverige",
-                  "Betalning på plats",
-                ].map((t) => (
-                  <li key={t} className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-accent" aria-hidden="true" />
-                    {t}
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
         </section>
 
-        {/* Stats strip */}
+        {/* Trust badges */}
+        <section className="border-y border-border bg-forest">
+          <ul className="mx-auto grid max-w-6xl gap-3 px-5 py-5 text-sm font-medium text-forest-foreground sm:grid-cols-3 sm:px-6">
+            {trustBadges.map((t) => (
+              <li key={t} className="flex items-center justify-center gap-2 text-center">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                {t}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Stats */}
         <section className="border-b border-border bg-card">
-          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px overflow-hidden px-5 sm:px-6 lg:grid-cols-4">
-            {stats.map((s) => (
-              <div key={s.label} className="px-2 py-7 text-center lg:py-9">
-                <p className="font-display text-2xl font-bold text-brand sm:text-3xl">
-                  {s.value}
-                </p>
-                <p className="mt-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground sm:text-sm sm:normal-case sm:tracking-normal">
-                  {s.label}
-                </p>
-              </div>
+          <div className="mx-auto grid max-w-6xl grid-cols-2 px-5 sm:px-6 lg:grid-cols-4">
+            {stats.map((s, i) => (
+              <Reveal key={s.label} delay={i * 80}>
+                <div className="px-2 py-7 text-center lg:py-9">
+                  <p className="font-display text-2xl font-bold text-brand sm:text-3xl">
+                    {s.value}
+                  </p>
+                  <p className="mt-1.5 text-xs font-medium text-muted-foreground sm:text-sm">
+                    {s.label}
+                  </p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </section>
 
-        {/* Intro / trust */}
+        {/* Value props */}
         <section className="mx-auto max-w-6xl px-5 py-20 sm:px-6 sm:py-24">
-          <SectionHeading
-            eyebrow="Vi betalar bäst i stan"
-            title="En ärlig värdering och en enkel affär"
-            text="Vi är seriösa köpare och erbjuder kostnadsfri värdering via telefon – från äldre fordon till nyare modeller, även objekt med fel och skador."
-          />
+          <Reveal>
+            <SectionHeading
+              eyebrow="Varför sälja till oss"
+              title="En trygg och rak affär – utan krångel"
+              text="Vi är seriösa köpare med tydliga villkor, snabba besked och hämtning i hela Sverige."
+            />
+          </Reveal>
           <div className="mt-12 grid gap-5 sm:grid-cols-3">
-            {[
-              {
-                icon: ShieldCheck,
-                title: "Trygg affär",
-                text: "Tydliga villkor, korrekta papper och betalning enligt överenskommelse.",
-              },
-              {
-                icon: Banknote,
-                title: "Konkurrenskraftigt bud",
-                text: "Vår målsättning är alltid en korrekt och marknadsmässig värdering.",
-              },
-              {
-                icon: Clock,
-                title: "Snabbt besked",
-                text: "Ring så får du oftast ett bud direkt på telefon – utan krångel.",
-              },
-            ].map(({ icon: Icon, title, text }) => (
-              <div key={title} className="surface-card rounded-2xl p-6">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10">
-                  <Icon className="h-5 w-5 text-brand" aria-hidden="true" />
-                </span>
-                <h3 className="mt-4 text-lg font-semibold text-foreground">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
-              </div>
+            {valueProps.map(({ icon: Icon, title, text }, i) => (
+              <Reveal key={title} delay={i * 100}>
+                <div className="surface-card h-full rounded-2xl p-7">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10">
+                    <Icon className="h-6 w-6 text-brand" aria-hidden="true" />
+                  </span>
+                  <h3 className="mt-5 text-lg font-semibold text-foreground">{title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -638,14 +777,18 @@ function Index() {
         {/* What we buy */}
         <section id="vikoper" className="bg-sand px-5 py-20 sm:px-6 sm:py-24">
           <div className="mx-auto max-w-6xl">
-            <SectionHeading
-              eyebrow="Vi köper bland annat"
-              title="Nästan allt är av intresse"
-              text="Klicka på en punkt för att läsa mer – och ring oss så hör du vad vi kan erbjuda för ditt fordon."
-            />
+            <Reveal>
+              <SectionHeading
+                eyebrow="Vi köper bland annat"
+                title="Nästan allt är av intresse"
+                text="Klicka på en punkt för att läsa mer – och ring oss så hör du vad vi kan erbjuda för ditt fordon."
+              />
+            </Reveal>
             <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {boughtItems.map((item) => (
-                <BoughtItemCard key={item.title} item={item} />
+              {boughtItems.map((item, i) => (
+                <Reveal key={item.title} delay={(i % 3) * 80}>
+                  <BoughtItemCard item={item} />
+                </Reveal>
               ))}
             </ul>
           </div>
@@ -653,41 +796,40 @@ function Index() {
 
         {/* Process */}
         <section id="sagar" className="mx-auto max-w-6xl px-5 py-20 sm:px-6 sm:py-24">
-          <SectionHeading
-            eyebrow="Så går det till"
-            title="Tre enkla steg till en klar affär"
-          />
+          <Reveal>
+            <SectionHeading eyebrow="Så går det till" title="Tre enkla steg till en klar affär" />
+          </Reveal>
           <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {steps.map((s) => (
-              <div key={s.step} className="surface-card relative rounded-2xl p-7">
-                <span className="font-display text-4xl font-extrabold text-brand/15">
-                  {s.step}
-                </span>
-                <h3 className="mt-3 text-lg font-semibold text-foreground">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.text}</p>
-              </div>
+            {steps.map((s, i) => (
+              <Reveal key={s.step} delay={i * 110}>
+                <div className="surface-card relative h-full rounded-2xl p-7">
+                  <span className="font-display text-4xl font-extrabold text-brand/20">
+                    {s.step}
+                  </span>
+                  <h3 className="mt-3 text-lg font-semibold text-foreground">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.text}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </section>
 
-        {/* Benefits */}
+        {/* Services */}
         <section className="bg-sand px-5 py-20 sm:px-6 sm:py-24">
           <div className="mx-auto max-w-6xl">
-            <SectionHeading
-              eyebrow="Service"
-              title="Vi kan även hjälpa dig med"
-            />
+            <Reveal>
+              <SectionHeading eyebrow="Service" title="Vi kan även hjälpa dig med" />
+            </Reveal>
             <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {benefits.map(({ icon: Icon, text }) => (
-                <div
-                  key={text}
-                  className="surface-card flex items-center gap-4 rounded-2xl p-5"
-                >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10">
-                    <Icon className="h-5 w-5 text-brand" aria-hidden="true" />
-                  </span>
-                  <p className="font-medium leading-snug text-foreground">{text}</p>
-                </div>
+              {services.map(({ icon: Icon, text }, i) => (
+                <Reveal key={text} delay={(i % 3) * 80}>
+                  <div className="surface-card flex h-full items-center gap-4 rounded-2xl p-5">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                      <Icon className="h-5 w-5 text-brand" aria-hidden="true" />
+                    </span>
+                    <p className="min-w-0 font-medium leading-snug text-foreground">{text}</p>
+                  </div>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -695,44 +837,42 @@ function Index() {
 
         {/* Gallery */}
         <section id="galleri" className="mx-auto max-w-6xl px-5 py-20 sm:px-6 sm:py-24">
-          <SectionHeading
-            eyebrow="Referenser"
-            title="Fordon vi köpt"
-            text="Ett urval av husbilar och husvagnar vi har köpt in."
-          />
+          <Reveal>
+            <SectionHeading
+              eyebrow="Referenser"
+              title="Fordon vi köpt"
+              text="Ett urval av husbilar och husvagnar vi har köpt in."
+            />
+          </Reveal>
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {gallery.map((img, i) => (
-              <div
-                key={img.src}
-                className={[
-                  "group relative overflow-hidden rounded-2xl bg-card shadow-soft",
-                  i === 0 ? "sm:col-span-2 sm:row-span-1" : "",
-                ].join(" ")}
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  loading="lazy"
-                  className={[
-                    "w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]",
-                    i === 0 ? "aspect-[16/9]" : "aspect-[4/3]",
-                  ].join(" ")}
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-forest/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <p className="pointer-events-none absolute bottom-4 left-4 translate-y-2 text-sm font-semibold text-forest-foreground opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  {img.alt}
-                </p>
-              </div>
+              <Reveal key={img.src} delay={(i % 3) * 90} className={i === 0 ? "sm:col-span-2" : ""}>
+                <div className="group relative overflow-hidden rounded-2xl bg-card shadow-soft">
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    loading="lazy"
+                    className={[
+                      "w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]",
+                      i === 0 ? "aspect-[16/9]" : "aspect-[4/3]",
+                    ].join(" ")}
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-forest/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <p className="pointer-events-none absolute bottom-4 left-4 translate-y-2 text-sm font-semibold text-forest-foreground opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                    {img.alt}
+                  </p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </section>
 
-        {/* Nationwide pickup + CTA */}
+        {/* Nationwide pickup */}
         <section className="relative overflow-hidden bg-forest px-5 py-20 text-forest-foreground sm:px-6 sm:py-24">
           <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-brand/20 blur-3xl" />
           <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
-            <div>
+            <Reveal>
               <span className="inline-flex items-center gap-2 rounded-full border border-forest-foreground/25 px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-accent">
                 <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
                 Hela Sverige
@@ -745,41 +885,42 @@ function Index() {
                 ordna transport själv – kontakta oss så hittar vi en smidig
                 lösning enligt överenskommelse.
               </p>
-            </div>
+            </Reveal>
 
-            <div className="rounded-3xl border border-forest-foreground/15 bg-forest-foreground/[0.06] p-8 backdrop-blur-sm sm:p-10">
-              <h3 className="text-2xl font-bold">Sälj din husbil idag</h3>
-              <p className="mt-3 text-forest-foreground/80">
-                Vill du veta vad ditt fordon är värt? Ring för en kostnadsfri
-                värdering – snabbt, tryggt och enkelt.
-              </p>
-              <div className="mt-8">
-                <PhoneButton large className="w-full sm:w-auto" />
+            <Reveal delay={120}>
+              <div className="rounded-3xl border border-forest-foreground/15 bg-forest-foreground/[0.06] p-8 backdrop-blur-sm sm:p-10">
+                <h3 className="text-2xl font-bold">Sälj din husbil idag</h3>
+                <p className="mt-3 text-forest-foreground/80">
+                  Vill du veta vad ditt fordon är värt? Ring för en kostnadsfri
+                  värdering – snabbt, tryggt och enkelt.
+                </p>
+                <div className="mt-8">
+                  <PhoneButton large className="w-full sm:w-auto" />
+                </div>
               </div>
-              <p className="mt-4 text-sm text-forest-foreground/70">
-                Snabb &amp; smidig affär – tryggt och enkelt.
-              </p>
-            </div>
+            </Reveal>
           </div>
         </section>
 
-        {/* Contact form */}
+        {/* Lead form */}
         <section id="kontakt" className="px-5 py-20 sm:px-6 sm:py-24">
           <div className="mx-auto max-w-3xl">
-            <SectionHeading
-              eyebrow="Kontakt"
-              title="Kontakta oss"
-              text="Fyll i formuläret så återkommer vi till dig så snart vi kan."
-            />
-            <p className="mt-4 text-center text-muted-foreground">
-              Eller ring direkt på{" "}
-              <a href={PHONE_HREF} className="font-semibold text-brand hover:underline">
-                {PHONE_NUMBER}
-              </a>
-              .
-            </p>
+            <Reveal>
+              <SectionHeading
+                eyebrow="Kontakt"
+                title="Få en kostnadsfri värdering"
+                text="Fyll i uppgifterna om ditt fordon så återkommer vi med ett bud."
+              />
+              <p className="mt-4 text-center text-muted-foreground">
+                Eller ring direkt på{" "}
+                <a href={PHONE_HREF} className="font-semibold text-brand hover:underline">
+                  {PHONE_NUMBER}
+                </a>
+                .
+              </p>
+            </Reveal>
             <div className="mt-10">
-              <ContactForm />
+              <ValuationForm />
               <TestEmailButton />
             </div>
           </div>
@@ -788,27 +929,45 @@ function Index() {
 
       {/* Footer */}
       <footer className="border-t border-forest-foreground/10 bg-forest px-5 py-14 text-forest-foreground sm:px-6">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 text-center sm:flex-row sm:justify-between sm:text-left">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-forest-foreground/10">
-              <Truck className="h-5 w-5 text-accent" aria-hidden="true" />
-            </span>
-            <div>
-              <p className="font-display text-base font-bold uppercase tracking-[0.14em]">
-                Ljunggrens Husbilar
-              </p>
-              <p className="mt-0.5 text-sm text-forest-foreground/70">
-                Vi köper husbilar &amp; husvagnar i hela Sverige.
-              </p>
-            </div>
+        <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-3">
+          <div>
+            <BrandMark light />
+            <p className="mt-4 max-w-xs text-sm text-forest-foreground/70">
+              Vi köper husbilar och husvagnar i hela Sverige – alla märken,
+              modeller och skick.
+            </p>
           </div>
-          <a
-            href={PHONE_HREF}
-            className="inline-flex items-center gap-2 rounded-full border border-forest-foreground/25 px-6 py-3 text-lg font-semibold transition-colors hover:bg-forest-foreground/10"
-          >
-            <Phone className="h-4 w-4 text-accent" aria-hidden="true" />
-            {PHONE_NUMBER}
-          </a>
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-accent">
+              Genvägar
+            </p>
+            <ul className="mt-4 space-y-2 text-sm text-forest-foreground/75">
+              {navLinks.map((l) => (
+                <li key={l.href}>
+                  <a href={l.href} className="transition-colors hover:text-forest-foreground">
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-accent">
+              Kontakt
+            </p>
+            <a
+              href={PHONE_HREF}
+              className="mt-4 inline-flex items-center gap-2 rounded-full border border-forest-foreground/25 px-5 py-3 text-base font-semibold transition-colors hover:bg-forest-foreground/10"
+            >
+              <Phone className="h-4 w-4 text-accent" aria-hidden="true" />
+              {PHONE_NUMBER}
+            </a>
+            <p className="mt-4 text-sm text-forest-foreground/70">
+              Ljunggrens Husbilar
+              <br />
+              Hämtning i hela Sverige
+            </p>
+          </div>
         </div>
         <p className="mx-auto mt-10 max-w-6xl border-t border-forest-foreground/10 pt-6 text-center text-sm text-forest-foreground/60">
           © {new Date().getFullYear()} Ljunggrens Husbilar. Alla rättigheter förbehållna.

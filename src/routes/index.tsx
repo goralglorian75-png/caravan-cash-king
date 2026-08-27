@@ -134,6 +134,45 @@ function PhoneButton({
   );
 }
 
+function BoughtItemCard({
+  item,
+}: {
+  item: { title: string; description: string };
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <li className="rounded-xl bg-card shadow-sm">
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="flex w-full items-start gap-3 p-4 text-left transition-colors hover:bg-accent/5"
+        aria-expanded={isOpen}
+      >
+        <CheckCircle2
+          className="mt-0.5 h-5 w-5 shrink-0 text-brand"
+          aria-hidden="true"
+        />
+        <span className="flex-1 font-medium text-foreground">{item.title}</span>
+        <ChevronDown
+          className={[
+            "h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200",
+            isOpen ? "rotate-180" : "",
+          ].join(" ")}
+          aria-hidden="true"
+        />
+      </button>
+      {isOpen && (
+        <div className="px-4 pb-4 pt-0">
+          <p className="pl-8 text-sm leading-relaxed text-muted-foreground">
+            {item.description}
+          </p>
+        </div>
+      )}
+    </li>
+  );
+}
+
 function Index() {
   return (
     <main className="min-h-screen bg-background">

@@ -199,16 +199,7 @@ function Index() {
 
           <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {boughtItems.map((item) => (
-              <li
-                key={item}
-                className="flex items-start gap-3 rounded-xl bg-card p-4 shadow-sm"
-              >
-                <CheckCircle2
-                  className="mt-0.5 h-5 w-5 shrink-0 text-brand"
-                  aria-hidden="true"
-                />
-                <span className="text-foreground">{item}</span>
-              </li>
+              <BoughtItemCard key={item.title} item={item} />
             ))}
           </ul>
         </div>

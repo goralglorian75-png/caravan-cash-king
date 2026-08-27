@@ -11,6 +11,9 @@ import {
   Send,
   Loader2,
   MailCheck,
+  ArrowRight,
+  Banknote,
+  Star,
 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import {

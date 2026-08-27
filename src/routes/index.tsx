@@ -1,6 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, CheckCircle2, MapPin, ShieldCheck, Clock, Truck } from "lucide-react";
 import heroImage from "../assets/hero-rv.jpg";
+import rv1 from "../assets/Snapchat-1985497538.jpg.asset.json";
+import rv2 from "../assets/Snapchat-545601298.jpg.asset.json";
+import rv3 from "../assets/Snapchat-1251419819.jpg.asset.json";
+import rv4 from "../assets/Snapchat-1610059080.jpg.asset.json";
+import rv5 from "../assets/Snapchat-627918383.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({

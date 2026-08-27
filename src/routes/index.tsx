@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Phone, CheckCircle2, MapPin, ShieldCheck, Clock, Truck } from "lucide-react";
+import { Phone, CheckCircle2, MapPin, ShieldCheck, Clock, Truck, ChevronDown } from "lucide-react";
+import { useState } from "react";
 import heroImage from "../assets/hero-rv.jpg";
 import rv1 from "../assets/Snapchat-1985497538.jpg.asset.json";
 import rv2 from "../assets/Snapchat-545601298.jpg.asset.json";

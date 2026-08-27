@@ -1,6 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, CheckCircle2, MapPin, ShieldCheck, Clock, Truck } from "lucide-react";
 import heroImage from "../assets/hero-rv.jpg";
+import rv1 from "../assets/Snapchat-1985497538.jpg.asset.json";
+import rv2 from "../assets/Snapchat-545601298.jpg.asset.json";
+import rv3 from "../assets/Snapchat-1251419819.jpg.asset.json";
+import rv4 from "../assets/Snapchat-1610059080.jpg.asset.json";
+import rv5 from "../assets/Snapchat-627918383.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,6 +51,14 @@ const boughtItems = [
   "Långmilare och kortmilare",
   "Diesel- och bensindrivna fordon",
   "Husbilar och husvagnar med olika typer av reparationsbehov",
+];
+
+const gallery = [
+  { src: rv1.url, alt: "Hobby husbil som vi köpt" },
+  { src: rv2.url, alt: "Knaus husbil med alkov" },
+  { src: rv3.url, alt: "Cabby 52 Comfort husvagn" },
+  { src: rv4.url, alt: "Kabe Smaragd XL husvagn" },
+  { src: rv5.url, alt: "Vit husvagn med röd dekor" },
 ];
 
 const benefits = [
@@ -180,6 +193,36 @@ function Index() {
               <p className="font-medium text-foreground">{text}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Gallery */}
+      <section className="bg-sand px-6 py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              Fordon vi köpt
+            </h2>
+            <p className="mt-4 text-muted-foreground">
+              Ett urval av husbilar och husvagnar vi har köpt in.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {gallery.map((img) => (
+              <div
+                key={img.src}
+                className="overflow-hidden rounded-2xl bg-card shadow-sm"
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading="lazy"
+                  className="aspect-[4/3] w-full object-cover transition-transform duration-300 hover:scale-105"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -41,7 +41,7 @@ const PHONE_NUMBER = "076-237 90 95";
 const PHONE_HREF = "tel:+46762379095";
 
 const boughtItems = [
-  "Husbilar och husvagnar från årsmodell 1990–2024",
+  "Husbilar och husvagnar från årsmodell 1990–2026",
   "Fordon från cirka 4 till 12 meter",
   "Obesiktigade husbilar och husvagnar",
   "Fordon med motorfel och andra tekniska fel",

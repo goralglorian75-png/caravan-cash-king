@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Phone, CheckCircle2, MapPin, ShieldCheck, Clock, Truck } from "lucide-react";
+import { Phone, CheckCircle2, MapPin, ShieldCheck, Clock, Truck, ChevronDown } from "lucide-react";
+import { useState } from "react";
 import heroImage from "../assets/hero-rv.jpg";
 import rv1 from "../assets/Snapchat-1985497538.jpg.asset.json";
 import rv2 from "../assets/Snapchat-545601298.jpg.asset.json";
@@ -41,16 +42,56 @@ const PHONE_NUMBER = "076-237 90 95";
 const PHONE_HREF = "tel:+46762379095";
 
 const boughtItems = [
-  "Husbilar och husvagnar från årsmodell 1990–2026",
-  "Fordon från cirka 4 till 12 meter",
-  "Obesiktigade husbilar och husvagnar",
-  "Fordon med motorfel och andra tekniska fel",
-  "Krockskadade husbilar",
-  "Fuktskadade husbilar och husvagnar",
-  "Importerade fordon",
-  "Långmilare och kortmilare",
-  "Diesel- och bensindrivna fordon",
-  "Husbilar och husvagnar med olika typer av reparationsbehov",
+  {
+    title: "Husbilar och husvagnar från årsmodell 1990–2026",
+    description:
+      "Oavsett om fordonet är klassiskt eller nästan nytt kan vi ge en rättvis värdering och ett konkurrenskraftigt bud.",
+  },
+  {
+    title: "Fordon från cirka 4 till 12 meter",
+    description:
+      "Stora som små – från kompakta husbilar till stora familjevagnar. Vi anpassar hämtningen efter fordonets storlek.",
+  },
+  {
+    title: "Obesiktigade husbilar och husvagnar",
+    description:
+      "Saknas besiktning? Inga problem. Vi tittar på fordonets skick och ger dig ett bud ändå.",
+  },
+  {
+    title: "Fordon med motorfel och andra tekniska fel",
+    description:
+      "Motorn går inte som den ska? Vi köper även husbilar och husvagnar med motor-, växellåds- eller elproblem.",
+  },
+  {
+    title: "Krockskadade husbilar",
+    description:
+      "Skadat fordon efter olycka? Vi köper krockskadade fordon och sköter upphämtningen åt dig.",
+  },
+  {
+    title: "Fuktskadade husbilar och husvagnar",
+    description:
+      "Fuktskador är vanligt och inget hinder. Vi värderar fordonet utifrån läget och ger ett ärligt bud.",
+  },
+  {
+    title: "Importerade fordon",
+    description:
+      "Har du en importerad husbil eller husvagn? Vi köper även utländska märken och modeller.",
+  },
+  {
+    title: "Långmilare och kortmilare",
+    description:
+      "Hög eller låg milräknare spelar ingen roll – vi köper fordon i alla körmängder.",
+  },
+  {
+    title: "Diesel- och bensindrivna fordon",
+    description:
+      "Både diesel och bensin är av intresse. Vi köper drivmedelstyper oavsett marknadsläge.",
+  },
+  {
+    title: "Husbilar och husvagnar med olika typer av reparationsbehov",
+    description:
+      "Stora eller små reparationsbehov – vi köper fordon som behöver lite extra kärlek också.",
+  },
 ];
 
 const gallery = [
@@ -90,6 +131,45 @@ function PhoneButton({
       <Phone className={large ? "h-5 w-5" : "h-4 w-4"} aria-hidden="true" />
       {PHONE_NUMBER}
     </a>
+  );
+}
+
+function BoughtItemCard({
+  item,
+}: {
+  item: { title: string; description: string };
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <li className="rounded-xl bg-card shadow-sm">
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="flex w-full items-start gap-3 p-4 text-left transition-colors hover:bg-accent/5"
+        aria-expanded={isOpen}
+      >
+        <CheckCircle2
+          className="mt-0.5 h-5 w-5 shrink-0 text-brand"
+          aria-hidden="true"
+        />
+        <span className="flex-1 font-medium text-foreground">{item.title}</span>
+        <ChevronDown
+          className={[
+            "h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200",
+            isOpen ? "rotate-180" : "",
+          ].join(" ")}
+          aria-hidden="true"
+        />
+      </button>
+      {isOpen && (
+        <div className="px-4 pb-4 pt-0">
+          <p className="pl-8 text-sm leading-relaxed text-muted-foreground">
+            {item.description}
+          </p>
+        </div>
+      )}
+    </li>
   );
 }
 
@@ -158,16 +238,7 @@ function Index() {
 
           <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {boughtItems.map((item) => (
-              <li
-                key={item}
-                className="flex items-start gap-3 rounded-xl bg-card p-4 shadow-sm"
-              >
-                <CheckCircle2
-                  className="mt-0.5 h-5 w-5 shrink-0 text-brand"
-                  aria-hidden="true"
-                />
-                <span className="text-foreground">{item}</span>
-              </li>
+              <BoughtItemCard key={item.title} item={item} />
             ))}
           </ul>
         </div>

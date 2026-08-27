@@ -513,6 +513,28 @@ function Index() {
         </p>
       </section>
 
+      {/* Contact form */}
+      <section id="kontakt" className="bg-sand px-6 py-16 sm:py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              Kontakta oss
+            </h2>
+            <p className="mt-4 text-muted-foreground">
+              Fyll i formuläret så återkommer vi till dig. Du kan också ringa oss
+              direkt på{" "}
+              <a href={PHONE_HREF} className="font-medium text-brand hover:underline">
+                {PHONE_NUMBER}
+              </a>
+              .
+            </p>
+          </div>
+          <div className="mt-10">
+            <ContactForm />
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-border bg-sand px-6 py-10">
         <div className="mx-auto max-w-5xl text-center">

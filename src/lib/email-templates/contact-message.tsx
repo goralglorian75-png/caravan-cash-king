@@ -17,11 +17,11 @@ export const VEHICLE_LABELS: Record<string, string> = {
 };
 
 export interface ContactMessageProps {
-  regnr?: string;
+  regnr?: string | undefined;
   vehicleType: string;
   condition: string;
   phone: string;
-  email?: string;
+  email?: string | undefined;
 }
 
 export function ContactMessageEmail({

@@ -10,7 +10,7 @@ import {
   ChevronDown,
   Send,
   Loader2,
-  MailCheck,
+  
   ArrowRight,
   Banknote,
   Wrench,
@@ -24,10 +24,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
-import {
-  submitContactForm,
-  sendTestMessage,
-} from "../lib/contact.functions";
+import { submitContactForm } from "../lib/contact.functions";
 import heroImage from "../assets/hero-rv.jpg";
 import rv1 from "../assets/Snapchat-1985497538.jpg.asset.json";
 import rv2 from "../assets/Snapchat-545601298.jpg.asset.json";

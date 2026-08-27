@@ -53,6 +53,14 @@ const boughtItems = [
   "Husbilar och husvagnar med olika typer av reparationsbehov",
 ];
 
+const gallery = [
+  { src: rv1.url, alt: "Hobby husbil som vi köpt" },
+  { src: rv2.url, alt: "Knaus husbil med alkov" },
+  { src: rv3.url, alt: "Cabby 52 Comfort husvagn" },
+  { src: rv4.url, alt: "Kabe Smaragd XL husvagn" },
+  { src: rv5.url, alt: "Vit husvagn med röd dekor" },
+];
+
 const benefits = [
   { icon: CheckCircle2, text: "Inlösen av kvarvarande/restskuld" },
   { icon: Truck, text: "Hämtning av din husbil eller husvagn" },

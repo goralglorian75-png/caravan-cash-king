@@ -40,6 +40,8 @@ export async function sendContactMessage(data: ContactMessageProps) {
       to: RECIPIENT,
       from: FROM,
       sender_domain: SENDER_DOMAIN,
+      purpose: "transactional",
+      label: "contact-form",
       reply_to: data.email,
       subject: `Nytt meddelande från ${data.name} – ${interestLabel}`,
       html,

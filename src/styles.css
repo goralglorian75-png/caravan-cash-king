@@ -163,6 +163,35 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
     font-feature-settings: "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
   }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@utility surface-card {
+  background-color: var(--color-card);
+  border: 1px solid color-mix(in oklab, var(--color-border) 70%, transparent);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 220ms ease, transform 220ms ease, border-color 220ms ease;
+
+  &:hover {
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in oklab, var(--color-brand) 35%, transparent);
+  }
+}
+
+@utility hero-veil {
+  background:
+    linear-gradient(
+      100deg,
+      color-mix(in oklab, var(--forest) 92%, transparent) 0%,
+      color-mix(in oklab, var(--forest) 74%, transparent) 45%,
+      color-mix(in oklab, var(--forest) 35%, transparent) 100%
+    );
 }

@@ -345,7 +345,7 @@ function ContactForm() {
 
   if (status === "sent") {
     return (
-      <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
+      <div className="surface-card rounded-3xl p-10 text-center">
         <CheckCircle2 className="mx-auto h-12 w-12 text-brand" aria-hidden="true" />
         <h3 className="mt-4 text-xl font-semibold text-foreground">
           Tack för ditt meddelande!

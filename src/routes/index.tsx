@@ -122,13 +122,112 @@ const gallery = [
 ];
 
 const benefits = [
-  { icon: CheckCircle2, text: "Inlösen av kvarvarande/restskuld" },
+  { icon: Banknote, text: "Inlösen av kvarvarande/restskuld" },
   { icon: Truck, text: "Hämtning av din husbil eller husvagn" },
   { icon: MapPin, text: "Hämtning över hela Sverige" },
   { icon: Clock, text: "Snabb och smidig affär" },
   { icon: ShieldCheck, text: "Kontant betalning på plats enligt överenskommelse" },
   { icon: Phone, text: "Seriös värdering och enkel försäljning" },
 ];
+
+const stats = [
+  { value: "1990–2026", label: "Årsmodeller vi köper" },
+  { value: "4–12 m", label: "Alla fordonsstorlekar" },
+  { value: "Hela", label: "Sverige – vi hämtar" },
+  { value: "0 kr", label: "Kostnadsfri värdering" },
+];
+
+const steps = [
+  {
+    step: "01",
+    title: "Ring eller skicka formuläret",
+    text: "Berätta kort om fordonet – märke, årsmodell, mil och skick. Bilder är ett plus men inget krav.",
+  },
+  {
+    step: "02",
+    title: "Du får ett bud",
+    text: "Vi gör en kostnadsfri värdering via telefon och lämnar ett tydligt och konkurrenskraftigt bud.",
+  },
+  {
+    step: "03",
+    title: "Vi hämtar och betalar",
+    text: "Vi hämtar fordonet var du än är i Sverige, löser eventuell restskuld och betalar enligt överenskommelse.",
+  },
+];
+
+function SectionHeading({
+  eyebrow,
+  title,
+  text,
+  light,
+}: {
+  eyebrow: string;
+  title: string;
+  text?: string;
+  light?: boolean;
+}) {
+  return (
+    <div className="mx-auto max-w-2xl text-center">
+      <span
+        className={[
+          "inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.18em]",
+          light
+            ? "border-forest-foreground/25 text-accent"
+            : "border-border bg-card text-brand",
+        ].join(" ")}
+      >
+        {eyebrow}
+      </span>
+      <h2
+        className={[
+          "mt-5 text-balance text-3xl font-bold sm:text-4xl",
+          light ? "text-forest-foreground" : "text-foreground",
+        ].join(" ")}
+      >
+        {title}
+      </h2>
+      {text && (
+        <p
+          className={[
+            "mt-4 text-pretty text-base leading-relaxed sm:text-lg",
+            light ? "text-forest-foreground/80" : "text-muted-foreground",
+          ].join(" ")}
+        >
+          {text}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function SiteHeader() {
+  return (
+    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3.5 sm:px-6">
+        <a href="#top" className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-forest">
+            <Truck className="h-5 w-5 text-accent" aria-hidden="true" />
+          </span>
+          <span className="leading-tight">
+            <span className="block font-display text-sm font-bold uppercase tracking-[0.14em] text-foreground">
+              Ljunggrens
+            </span>
+            <span className="block text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              Husbilar
+            </span>
+          </span>
+        </a>
+        <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
+          <a href="#vikoper" className="transition-colors hover:text-foreground">Vi köper</a>
+          <a href="#sagar" className="transition-colors hover:text-foreground">Så går det till</a>
+          <a href="#galleri" className="transition-colors hover:text-foreground">Fordon</a>
+          <a href="#kontakt" className="transition-colors hover:text-foreground">Kontakt</a>
+        </nav>
+        <PhoneButton className="shrink-0" />
+      </div>
+    </header>
+  );
+}
 
 function PhoneButton({
   large,

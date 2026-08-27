@@ -368,7 +368,7 @@ function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl bg-card p-6 shadow-sm sm:p-8"
+      className="surface-card rounded-3xl p-6 sm:p-8"
       noValidate={false}
     >
       <div className="grid gap-5 sm:grid-cols-2">

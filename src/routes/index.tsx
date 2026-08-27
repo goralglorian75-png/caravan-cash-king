@@ -10,9 +10,13 @@ import {
   ChevronDown,
   Send,
   Loader2,
+  MailCheck,
 } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import { submitContactForm } from "../lib/contact.functions";
+import {
+  submitContactForm,
+  sendTestMessage,
+} from "../lib/contact.functions";
 import heroImage from "../assets/hero-rv.jpg";
 import rv1 from "../assets/Snapchat-1985497538.jpg.asset.json";
 import rv2 from "../assets/Snapchat-545601298.jpg.asset.json";
@@ -353,6 +357,64 @@ function ContactForm() {
   );
 }
 
+function TestEmailButton() {
+  const sendTest = useServerFn(sendTestMessage);
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
+  const [message, setMessage] = useState("");
+
+  async function handleClick() {
+    setState("sending");
+    setMessage("");
+    try {
+      await sendTest();
+      setState("sent");
+      setMessage(
+        "Testmeddelande skickat! Kolla inkorgen (och skräpposten) hos mottagaren.",
+      );
+    } catch (error) {
+      setState("error");
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Testmeddelandet kunde inte skickas.",
+      );
+    }
+  }
+
+  return (
+    <div className="mt-4 rounded-xl border border-dashed border-border p-4">
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={state === "sending"}
+        className="inline-flex items-center gap-2 rounded-full border border-brand px-5 py-2 text-sm font-semibold text-brand transition-colors hover:bg-brand/5 disabled:opacity-60"
+      >
+        {state === "sending" ? (
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+        ) : (
+          <MailCheck className="h-4 w-4" aria-hidden="true" />
+        )}
+        {state === "sending" ? "Skickar test…" : "Skicka testmeddelande"}
+      </button>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Testknapp för dig som ägare – skickar ett färdigt testmeddelande så du
+        kan verifiera att e-posten fungerar.
+      </p>
+      {message && (
+        <p
+          className={`mt-2 text-sm font-medium ${
+            state === "error" ? "text-destructive" : "text-brand"
+          }`}
+        >
+          {message}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function Index() {
   return (
     <main className="min-h-screen bg-background">
@@ -531,6 +593,7 @@ function Index() {
           </div>
           <div className="mt-10">
             <ContactForm />
+            <TestEmailButton />
           </div>
         </div>
       </section>

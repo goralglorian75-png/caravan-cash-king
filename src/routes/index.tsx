@@ -306,7 +306,7 @@ const interestOptions = [
 ] as const;
 
 const inputClass =
-  "w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground/60 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30";
+  "w-full rounded-xl border border-border bg-secondary/40 px-4 py-3 text-foreground transition-colors placeholder:text-muted-foreground/60 hover:bg-secondary/60 focus:border-brand focus:bg-card focus:outline-none focus:ring-4 focus:ring-brand/15";
 
 function ContactForm() {
   const submit = useServerFn(submitContactForm);

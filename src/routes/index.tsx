@@ -196,6 +196,36 @@ function Index() {
         </div>
       </section>
 
+      {/* Gallery */}
+      <section className="bg-sand px-6 py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              Fordon vi köpt
+            </h2>
+            <p className="mt-4 text-muted-foreground">
+              Ett urval av husbilar och husvagnar vi har köpt in.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {gallery.map((img) => (
+              <div
+                key={img.src}
+                className="overflow-hidden rounded-2xl bg-card shadow-sm"
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading="lazy"
+                  className="aspect-[4/3] w-full object-cover transition-transform duration-300 hover:scale-105"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Nationwide pickup */}
       <section className="bg-forest px-6 py-16 text-forest-foreground sm:py-20">
         <div className="mx-auto max-w-4xl text-center">

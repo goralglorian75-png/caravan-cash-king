@@ -240,9 +240,9 @@ function PhoneButton({
     <a
       href={PHONE_HREF}
       className={[
-        "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all",
-        "bg-brand text-brand-foreground shadow-sm hover:bg-brand/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-        large ? "px-8 py-4 text-lg" : "px-6 py-3 text-base",
+        "group inline-flex items-center justify-center gap-2.5 rounded-full font-semibold tracking-tight transition-all duration-200",
+        "bg-brand text-brand-foreground shadow-[0_10px_30px_-12px_var(--brand)] hover:-translate-y-0.5 hover:bg-brand/92 hover:shadow-[0_18px_38px_-14px_var(--brand)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        large ? "px-8 py-4 text-lg" : "px-5 py-2.5 text-sm sm:text-base",
         className,
       ].join(" ")}
     >
@@ -260,33 +260,39 @@ function BoughtItemCard({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <li className="rounded-xl bg-card shadow-sm">
+    <li className="surface-card overflow-hidden rounded-2xl">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex w-full items-start gap-3 p-4 text-left transition-colors hover:bg-accent/5"
+        className="flex w-full items-start gap-3.5 p-5 text-left"
         aria-expanded={isOpen}
       >
-        <CheckCircle2
-          className="mt-0.5 h-5 w-5 shrink-0 text-brand"
-          aria-hidden="true"
-        />
-        <span className="flex-1 font-medium text-foreground">{item.title}</span>
+        <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand/10">
+          <CheckCircle2 className="h-4 w-4 text-brand" aria-hidden="true" />
+        </span>
+        <span className="flex-1 font-semibold leading-snug text-foreground">
+          {item.title}
+        </span>
         <ChevronDown
           className={[
-            "h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200",
-            isOpen ? "rotate-180" : "",
+            "mt-0.5 h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300",
+            isOpen ? "rotate-180 text-brand" : "",
           ].join(" ")}
           aria-hidden="true"
         />
       </button>
-      {isOpen && (
-        <div className="px-4 pb-4 pt-0">
-          <p className="pl-8 text-sm leading-relaxed text-muted-foreground">
+      <div
+        className={[
+          "grid transition-all duration-300 ease-out",
+          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+        ].join(" ")}
+      >
+        <div className="overflow-hidden">
+          <p className="border-t border-border/60 px-5 pb-5 pt-4 text-sm leading-relaxed text-muted-foreground">
             {item.description}
           </p>
         </div>
-      )}
+      </div>
     </li>
   );
 }

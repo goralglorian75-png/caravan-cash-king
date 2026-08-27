@@ -10,9 +10,13 @@ import {
   ChevronDown,
   Send,
   Loader2,
+  MailCheck,
 } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import { submitContactForm } from "../lib/contact.functions";
+import {
+  submitContactForm,
+  sendTestMessage,
+} from "../lib/contact.functions";
 import heroImage from "../assets/hero-rv.jpg";
 import rv1 from "../assets/Snapchat-1985497538.jpg.asset.json";
 import rv2 from "../assets/Snapchat-545601298.jpg.asset.json";
@@ -589,6 +593,7 @@ function Index() {
           </div>
           <div className="mt-10">
             <ContactForm />
+            <TestEmailButton />
           </div>
         </div>
       </section>

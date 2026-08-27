@@ -58,6 +58,12 @@
   --color-sand-foreground: var(--sand-foreground);
   --color-forest: var(--forest);
   --color-forest-foreground: var(--forest-foreground);
+
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-soft: 0 1px 2px oklch(0.22 0.035 255 / 0.04), 0 8px 24px -12px oklch(0.22 0.035 255 / 0.14);
+  --shadow-lift: 0 2px 4px oklch(0.22 0.035 255 / 0.05), 0 24px 48px -20px oklch(0.22 0.035 255 / 0.28);
 }
 
 :root {

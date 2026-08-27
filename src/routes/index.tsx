@@ -185,6 +185,174 @@ function BoughtItemCard({
   );
 }
 
+const interestOptions = [
+  { value: "salja", label: "Jag vill sälja husbil/husvagn" },
+  { value: "kopa", label: "Jag vill köpa" },
+  { value: "byta", label: "Jag vill byta" },
+  { value: "husbil", label: "Fråga om husbil" },
+  { value: "ovrigt", label: "Övrig fråga" },
+] as const;
+
+const inputClass =
+  "w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground/60 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30";
+
+function ContactForm() {
+  const submit = useServerFn(submitContactForm);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const fd = new FormData(form);
+    setStatus("sending");
+    setErrorMsg("");
+    try {
+      await submit({
+        data: {
+          name: String(fd.get("name") ?? ""),
+          phone: String(fd.get("phone") ?? ""),
+          email: String(fd.get("email") ?? ""),
+          interest: String(fd.get("interest") ?? "salja"),
+          message: String(fd.get("message") ?? ""),
+        },
+      });
+      form.reset();
+      setStatus("sent");
+    } catch (error) {
+      setErrorMsg(
+        error instanceof Error
+          ? error.message
+          : "Något gick fel. Försök igen eller ring oss.",
+      );
+      setStatus("error");
+    }
+  }
+
+  if (status === "sent") {
+    return (
+      <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
+        <CheckCircle2 className="mx-auto h-12 w-12 text-brand" aria-hidden="true" />
+        <h3 className="mt-4 text-xl font-semibold text-foreground">
+          Tack för ditt meddelande!
+        </h3>
+        <p className="mt-2 text-muted-foreground">
+          Vi har tagit emot din förfrågan och återkommer till dig så snart som
+          möjligt.
+        </p>
+        <button
+          type="button"
+          onClick={() => setStatus("idle")}
+          className="mt-6 text-sm font-medium text-brand hover:underline"
+        >
+          Skicka ett till meddelande
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-2xl bg-card p-6 shadow-sm sm:p-8"
+      noValidate={false}
+    >
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-foreground">
+            Namn *
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            required
+            maxLength={100}
+            autoComplete="name"
+            placeholder="Ditt namn"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-foreground">
+            Telefonnummer *
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            required
+            maxLength={25}
+            autoComplete="tel"
+            placeholder="07X-XXX XX XX"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">
+            E-postadress *
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            maxLength={255}
+            autoComplete="email"
+            placeholder="din@epost.se"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="interest" className="mb-1.5 block text-sm font-medium text-foreground">
+            Vad gäller det? *
+          </label>
+          <select id="interest" name="interest" required className={inputClass} defaultValue="salja">
+            {interestOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="mt-5">
+        <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-foreground">
+          Meddelande *
+        </label>
+        <textarea
+          id="message"
+          name="message"
+          required
+          maxLength={2000}
+          rows={5}
+          placeholder="Berätta gärna om fordonet – märke, årsmodell, skick och mileage."
+          className={inputClass}
+        />
+      </div>
+      {status === "error" && (
+        <p className="mt-4 rounded-lg bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive">
+          {errorMsg}
+        </p>
+      )}
+      <button
+        type="submit"
+        disabled={status === "sending"}
+        className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-8 py-4 text-lg font-semibold text-brand-foreground shadow-sm transition-all hover:bg-brand/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60 sm:w-auto"
+      >
+        {status === "sending" ? (
+          <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+        ) : (
+          <Send className="h-5 w-5" aria-hidden="true" />
+        )}
+        {status === "sending" ? "Skickar…" : "Skicka meddelande"}
+      </button>
+    </form>
+  );
+}
+
 function Index() {
   return (
     <main className="min-h-screen bg-background">

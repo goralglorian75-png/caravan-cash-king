@@ -58,6 +58,12 @@
   --color-sand-foreground: var(--sand-foreground);
   --color-forest: var(--forest);
   --color-forest-foreground: var(--forest-foreground);
+
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-soft: 0 1px 2px oklch(0.22 0.035 255 / 0.04), 0 8px 24px -12px oklch(0.22 0.035 255 / 0.14);
+  --shadow-lift: 0 2px 4px oklch(0.22 0.035 255 / 0.05), 0 24px 48px -20px oklch(0.22 0.035 255 / 0.28);
 }
 
 :root {
@@ -157,6 +163,35 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
     font-feature-settings: "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
   }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@utility surface-card {
+  background-color: var(--color-card);
+  border: 1px solid color-mix(in oklab, var(--color-border) 70%, transparent);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 220ms ease, transform 220ms ease, border-color 220ms ease;
+
+  &:hover {
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in oklab, var(--color-brand) 35%, transparent);
+  }
+}
+
+@utility hero-veil {
+  background:
+    linear-gradient(
+      100deg,
+      color-mix(in oklab, var(--forest) 92%, transparent) 0%,
+      color-mix(in oklab, var(--forest) 74%, transparent) 45%,
+      color-mix(in oklab, var(--forest) 35%, transparent) 100%
+    );
 }

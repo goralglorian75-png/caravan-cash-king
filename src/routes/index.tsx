@@ -356,11 +356,10 @@ function SiteHeader() {
           ))}
         </nav>
         <div className="flex shrink-0 items-center gap-2">
-          <PhoneButton className="hidden sm:inline-flex" />
           <a
             href={PHONE_HREF}
             aria-label={`Ring ${PHONE_NUMBER}`}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand text-brand-foreground sm:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand text-brand-foreground transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand/92 hover:shadow-[0_10px_24px_-12px_var(--brand)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <Phone className="h-4 w-4" aria-hidden="true" />
           </a>
